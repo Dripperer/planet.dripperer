@@ -6,6 +6,15 @@ canvas.height = window.innerHeight;
 
 let gameOver = false;
 let keys = {};
+let planetsMoving = false; // Flag per determinare quando i pianeti iniziano a muoversi
+
+// Oggetto per tenere traccia dei punteggi
+let scores = {
+    rock: 0,
+    pop: 0,
+    jazz: 0,
+    funk: 0
+};
 
 // Array per i pianeti
 const planets = [];
@@ -15,8 +24,8 @@ class Player {
     constructor() {
         this.size = 50;
         this.x = canvas.width / 2 - this.size / 2;
-        this.y = canvas.height - this.size - 10;
-        this.speed = 5;
+        this.y = canvas.height / 2 - this.size / 2; // Posizionato al centro inizialmente
+        this.speed = 15; // Velocità ulteriormente aumentata
     }
 
     draw() {
@@ -24,12 +33,20 @@ class Player {
         context.fillRect(this.x, this.y, this.size, this.size);
     }
 
-    moveLeft() { 
-        if (this.x > 0) this.x -= this.speed; 
+    moveLeft() {
+        if (this.x > 0) this.x -= this.speed;
     }
 
-    moveRight() { 
-        if (this.x + this.size < canvas.width) this.x += this.speed; 
+    moveRight() {
+        if (this.x + this.size < canvas.width) this.x += this.speed;
+    }
+
+    moveUp() {
+        if (this.y > 0) this.y -= this.speed;
+    }
+
+    moveDown() {
+        if (this.y + this.size < canvas.height) this.y += this.speed;
     }
 }
 
@@ -51,9 +68,11 @@ class Planet {
     }
 
     update() {
-        this.y += this.speed;
-        if (this.y > canvas.height) {
-            this.resetPosition();
+        if (planetsMoving) {
+            this.y += this.speed;
+            if (this.y > canvas.height) {
+                this.resetPosition();
+            }
         }
     }
 
@@ -66,15 +85,18 @@ class Planet {
 // Funzione per generare pianeti basata sulla rarità
 function generatePlanet() {
     const rand = Math.random() * 100;
+    let planet;
     if (rand <= 1) {
-        return new Planet('Pianeta Funk', 'purple', 1);
+        planet = new Planet('Pianeta Funk', 'purple', 1);
     } else if (rand <= 11) {
-        return new Planet('Pianeta Jazz', 'blue', 10);
+        planet = new Planet('Pianeta Jazz', 'blue', 10);
     } else if (rand <= 61) {
-        return new Planet('Pianeta Pop', 'pink', 50);
+        planet = new Planet('Pianeta Pop', 'pink', 50);
     } else {
-        return new Planet('Pianeta Rock', 'red', 90);
+        planet = new Planet('Pianeta Rock', 'red', 90);
     }
+    console.log(`Generated planet: ${planet.name}`);
+    return planet;
 }
 
 // Funzione per gestire la collisione tra giocatore e pianeta
@@ -104,6 +126,17 @@ setInterval(() => {
     }
 }, 2500); // Genera un nuovo pianeta ogni 2.5 secondi
 
+// Funzione per disegnare il punteggio
+function drawScore() {
+    context.fillStyle = 'white';
+    context.font = '20px Comic Sans MS';
+    context.textAlign = 'right';
+    context.fillText(`Pianeta Rock: ${scores.rock}`, canvas.width - 20, 30);
+    context.fillText(`Pianeta Pop: ${scores.pop}`, canvas.width - 20, 60);
+    context.fillText(`Pianeta Jazz: ${scores.jazz}`, canvas.width - 20, 90);
+    context.fillText(`Pianeta Funk: ${scores.funk}`, canvas.width - 20, 120);
+}
+
 // Game loop principale
 function gameLoop() {
     if (gameOver) {
@@ -123,9 +156,12 @@ function gameLoop() {
         planet.draw();
 
         if (detectCollision(player, planet)) {
+            scores[planet.name.split(' ')[1].toLowerCase()]++; // Incrementa il punteggio del tipo di pianeta
             planet.resetPosition();
         }
     });
+
+    drawScore(); // Disegna il punteggio
 
     requestAnimationFrame(gameLoop);
 }
@@ -134,7 +170,12 @@ function gameLoop() {
 window.addEventListener('keydown', function(e) {
     keys[e.keyCode] = true;
     if (keys[37]) player.moveLeft();
+    if (keys[38]) {
+        player.moveUp();
+        planetsMoving = true; // I pianeti iniziano a muoversi quando il giocatore preme la freccetta in su
+    }
     if (keys[39]) player.moveRight();
+    if (keys[40]) player.moveDown();
 });
 
 window.addEventListener('keyup', function(e) {
@@ -142,4 +183,3 @@ window.addEventListener('keyup', function(e) {
 });
 
 gameLoop();
-

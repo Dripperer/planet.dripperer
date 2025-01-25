@@ -7,6 +7,7 @@ canvas.height = window.innerHeight;
 let gameOver = false;
 let keys = {};
 let planetsMoving = false; // Flag per determinare quando i pianeti iniziano a muoversi
+let touchStartX, touchStartY;
 
 // Oggetto per tenere traccia dei punteggi
 let scores = {
@@ -47,6 +48,13 @@ class Player {
 
     moveDown() {
         if (this.y + this.size < canvas.height) this.y += this.speed;
+    }
+
+    move(deltaX, deltaY) {
+        this.x += deltaX;
+        this.y += deltaY;
+        this.x = Math.max(0, Math.min(this.x, canvas.width - this.size));
+        this.y = Math.max(0, Math.min(this.y, canvas.height - this.size));
     }
 }
 
@@ -185,6 +193,27 @@ window.addEventListener('keydown', function(e) {
 
 window.addEventListener('keyup', function(e) {
     keys[e.keyCode] = false;
+});
+
+// Gestione degli input touch per dispositivi mobili
+canvas.addEventListener('touchstart', function(e) {
+    const touch = e.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+});
+
+canvas.addEventListener('touchmove', function(e) {
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+    player.move(deltaX, deltaY);
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+
+    // I pianeti iniziano a muoversi quando il giocatore si muove
+    if (deltaY < 0) {
+        planetsMoving = true;
+    }
 });
 
 gameLoop();

@@ -52,7 +52,7 @@ class Player {
 
 // Classe dei pianeti
 class Planet {
-    constructor(name, color, rarity) {
+    constructor(name, color, rarity, label) {
         this.name = name;
         this.size = 70; /* Pianeti più grandi */
         this.x = Math.random() * (canvas.width - this.size);
@@ -60,11 +60,16 @@ class Planet {
         this.speed = 2;
         this.color = color;
         this.rarity = rarity; // Percentuale di rarità
+        this.label = label; // Emoticon per il pianeta
     }
 
     draw() {
         context.fillStyle = this.color;
         context.fillRect(this.x, this.y, this.size, this.size);
+        context.fillStyle = 'white';
+        context.font = '20px Comic Sans MS';
+        context.textAlign = 'center';
+        context.fillText(this.label, this.x + this.size / 2, this.y + this.size / 2 + 7);
     }
 
     update() {
@@ -87,13 +92,13 @@ function generatePlanet() {
     const rand = Math.random() * 100;
     let planet;
     if (rand <= 1) {
-        planet = new Planet('Pianeta Funk', 'purple', 1);
+        planet = new Planet('Pianeta Funk', 'purple', 1, ':)');
     } else if (rand <= 11) {
-        planet = new Planet('Pianeta Jazz', 'blue', 10);
+        planet = new Planet('Pianeta Jazz', 'blue', 10, ':P');
     } else if (rand <= 61) {
-        planet = new Planet('Pianeta Pop', 'pink', 50);
+        planet = new Planet('Pianeta Pop', 'pink', 50, ':3');
     } else {
-        planet = new Planet('Pianeta Rock', 'red', 90);
+        planet = new Planet('Pianeta Rock', 'red', 90, '>:');
     }
     console.log(`Generated planet: ${planet.name}`);
     return planet;

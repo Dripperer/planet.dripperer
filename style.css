@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: #000; /* Sfondo nero */
+}
+
+#gameCanvas {
+    display: block;
+    background-color: #000; /* Sfondo nero */
+}

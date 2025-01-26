@@ -1,3 +1,4 @@
+
 const canvas = document.getElementById('gameCanvas');
 const context = canvas.getContext('2d');
 
@@ -8,6 +9,7 @@ let gameOver = false;
 let keys = {};
 let planetsMoving = false; // Flag per determinare quando i pianeti iniziano a muoversi
 let touchStartX, touchStartY;
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent); // Rileva dispositivi mobili
 
 // Oggetto per tenere traccia dei punteggi
 let scores = {
@@ -26,7 +28,7 @@ class Player {
         this.size = 50;
         this.x = canvas.width / 2 - this.size / 2;
         this.y = canvas.height / 2 - this.size / 2; // Posizionato al centro inizialmente
-        this.speed = 15; // Velocità ulteriormente aumentata
+        this.speed = isMobile ? 15 : 20; // Velocità aumentata solo su computer
     }
 
     draw() {
@@ -65,7 +67,7 @@ class Planet {
         this.size = 70; /* Pianeti più grandi */
         this.x = Math.random() * (canvas.width - this.size);
         this.y = -this.size - 100; // Partono un po' più in basso
-        this.speed = 2;
+        this.speed = 4; // Velocità aumentata da 2 a 4
         this.color = color;
         this.rarity = rarity; // Percentuale di rarità
         this.label = label; // Emoticon per il pianeta

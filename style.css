@@ -7,4 +7,6 @@ body {
 #gameCanvas {
     display: block;
     background-color: #000; /* Sfondo nero */
+    width: 100vw;
+    height: 100vh;
 }
